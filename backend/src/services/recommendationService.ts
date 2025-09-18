@@ -280,12 +280,9 @@ class RecommendationService {
     }
 
     const cropName = typeof crop === "string" ? crop : crop.name
-    const price = marketPrices[cropName] || 20000
-    const cost = productionCosts[cropName] || 25000
-
-    const revenue = (expectedYield || 3) * (farmSize || 1) * price
-    const totalCost = (farmSize || 1) * cost
-    const profit = revenue - totalCost
+    const revenue = expectedYield * farmSize * (marketPrices[cropName] || 20000)
+    const cost = farmSize * (productionCosts[cropName] || 25000)
+    const profit = revenue - cost
 
     return Math.round(profit)
   }
@@ -397,21 +394,6 @@ class RecommendationService {
       return "Consider alternatives - Market prices declining"
     }
     return "Moderate recommendation - Average market conditions"
-  }
-
-  private async analyzeCropSuitability(crop: string, profile: any, season: string): Promise<CropRecommendation> {
-    const mockRecommendation: CropRecommendation = {
-      crop,
-      variety: "Standard",
-      suitability: Math.floor(Math.random() * 40) + 60, // 60-100
-      expectedYield: Math.floor(Math.random() * 3) + 2, // 2-5 tons
-      profitability: Math.floor(Math.random() * 50000) + 20000, // 20k-70k
-      riskLevel: ["low", "medium", "high"][Math.floor(Math.random() * 3)] as "low" | "medium" | "high",
-      reasons: [`Suitable for ${season} season`, "Good market demand"],
-      bestPractices: ["Follow recommended spacing", "Apply balanced fertilization"],
-    }
-
-    return mockRecommendation
   }
 }
 

@@ -33,28 +33,20 @@ class TranslateService {
     const cached = await cache.get(cacheKey)
 
     if (cached) {
-      try {
-        const parsedCache = JSON.parse(cached)
-        return parsedCache.translatedText || cached
-      } catch {
-        return cached
-      }
+      return cached.translatedText
     }
 
     try {
-      const apiKey = process.env.GOOGLE_TRANSLATE_API_KEY
-      if (!apiKey) {
-        logger.warn("Google Translate API key not found, using mock translation")
-        return this.mockTranslate(text, sourceLanguage, targetLanguage)
-      }
-
       // Using Google Translate API
-      const response = await axios.post(`https://translation.googleapis.com/language/translate/v2?key=${apiKey}`, {
-        q: text,
-        source: sourceLanguage,
-        target: targetLanguage,
-        format: "text",
-      })
+      const response = await axios.post(
+        `https://translation.googleapis.com/language/translate/v2?key=${process.env.GOOGLE_TRANSLATE_API_KEY}`,
+        {
+          q: text,
+          source: sourceLanguage,
+          target: targetLanguage,
+          format: "text",
+        },
+      )
 
       const translatedText = response.data.data.translations[0].translatedText
 
@@ -65,7 +57,7 @@ class TranslateService {
         confidence: 0.95,
       }
 
-      await cache.set(cacheKey, JSON.stringify(result), 86400) // Cache for 24 hours
+      await cache.set(cacheKey, result, 86400) // Cache for 24 hours
       return translatedText
     } catch (error) {
       logger.error("Error translating text:", error)
@@ -84,14 +76,8 @@ class TranslateService {
     }
 
     try {
-      const apiKey = process.env.GOOGLE_TRANSLATE_API_KEY
-      if (!apiKey) {
-        logger.warn("Google Translate API key not found, using fallback language detection")
-        return "en"
-      }
-
       const response = await axios.post(
-        `https://translation.googleapis.com/language/translate/v2/detect?key=${apiKey}`,
+        `https://translation.googleapis.com/language/translate/v2/detect?key=${process.env.GOOGLE_TRANSLATE_API_KEY}`,
         {
           q: text,
         },
