@@ -9,8 +9,10 @@ const openai = new OpenAI({
 class VoiceService {
   async speechToText(audioBuffer: Buffer, language = "en"): Promise<string> {
     try {
+      const audioFile = new File([audioBuffer], "audio.wav", { type: "audio/wav" }) as any
+
       const response = await openai.audio.transcriptions.create({
-        file: new File([audioBuffer], "audio.wav", { type: "audio/wav" }),
+        file: audioFile,
         model: "whisper-1",
         language: language === "en" ? undefined : language,
       })
@@ -98,9 +100,11 @@ class VoiceService {
 
   async detectLanguage(audioBuffer: Buffer): Promise<string> {
     try {
+      const audioFile = new File([audioBuffer], "audio.wav", { type: "audio/wav" }) as any
+
       // First transcribe without language specification
       const response = await openai.audio.transcriptions.create({
-        file: new File([audioBuffer], "audio.wav", { type: "audio/wav" }),
+        file: audioFile,
         model: "whisper-1",
       })
 
