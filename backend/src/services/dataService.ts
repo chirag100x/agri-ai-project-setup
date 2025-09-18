@@ -1,6 +1,6 @@
 import axios from "axios"
 import { cache } from "../utils/cache"
-import { logger } from "../utils/logger"
+import logger from "../utils/logger"
 
 interface WeatherData {
   current: {
@@ -40,7 +40,7 @@ interface SatelliteData {
 class DataService {
   async getWeatherData(lat: number, lon: number): Promise<WeatherData> {
     const cacheKey = `weather_${lat}_${lon}`
-    const cached = await cache.get(cacheKey)
+    const cached = (await cache.get(cacheKey)) as WeatherData | null
 
     if (cached) {
       return cached
@@ -72,7 +72,7 @@ class DataService {
         })),
       }
 
-      await cache.set(cacheKey, weatherData, 3600) // Cache for 1 hour
+      await cache.set(cacheKey, JSON.stringify(weatherData), 3600) // Cache for 1 hour
       return weatherData
     } catch (error) {
       logger.error("Error fetching weather data:", error)
@@ -82,7 +82,7 @@ class DataService {
 
   async getSoilData(lat: number, lon: number): Promise<SoilData> {
     const cacheKey = `soil_${lat}_${lon}`
-    const cached = await cache.get(cacheKey)
+    const cached = (await cache.get(cacheKey)) as SoilData | null
 
     if (cached) {
       return cached
@@ -105,7 +105,7 @@ class DataService {
         moisture: Math.random() * 40 + 20, // Mock data - replace with actual sensor data
       }
 
-      await cache.set(cacheKey, soilData, 86400) // Cache for 24 hours
+      await cache.set(cacheKey, JSON.stringify(soilData), 86400) // Cache for 24 hours
       return soilData
     } catch (error) {
       logger.error("Error fetching soil data:", error)
@@ -121,7 +121,7 @@ class DataService {
   }): Promise<SatelliteData> {
     const { lat, lon, startDate, endDate } = params
     const cacheKey = `satellite_${lat}_${lon}_${startDate}_${endDate}`
-    const cached = await cache.get(cacheKey)
+    const cached = (await cache.get(cacheKey)) as SatelliteData | null
 
     if (cached) {
       return cached
@@ -143,7 +143,7 @@ class DataService {
         date: response.data.date || new Date().toISOString(),
       }
 
-      await cache.set(cacheKey, satelliteData, 43200) // Cache for 12 hours
+      await cache.set(cacheKey, JSON.stringify(satelliteData), 43200) // Cache for 12 hours
       return satelliteData
     } catch (error) {
       logger.error("Error fetching satellite data:", error)

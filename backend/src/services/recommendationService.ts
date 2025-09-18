@@ -1,7 +1,7 @@
 import { dataService } from "./dataService"
 import { CropHistory } from "../models/CropHistory"
 import { Profile } from "../models/Profile"
-import { logger } from "../utils/logger"
+import logger from "../utils/logger"
 
 interface RecommendationInput {
   userId: string
@@ -280,8 +280,8 @@ class RecommendationService {
     }
 
     const cropName = typeof crop === "string" ? crop : crop.name
-    const revenue = expectedYield * farmSize * (marketPrices[cropName] || 20000)
-    const cost = farmSize * (productionCosts[cropName] || 25000)
+    const revenue = (expectedYield || 3) * (farmSize || 1) * (marketPrices[cropName] || 20000)
+    const cost = (farmSize || 1) * (productionCosts[cropName] || 25000)
     const profit = revenue - cost
 
     return Math.round(profit)
@@ -394,6 +394,36 @@ class RecommendationService {
       return "Consider alternatives - Market prices declining"
     }
     return "Moderate recommendation - Average market conditions"
+  }
+
+  private async analyzeCropSuitability(crop: string, profile: any, season: string) {
+    try {
+      const weatherData = await dataService.getWeatherData(profile.location.lat, profile.location.lon)
+      const soilData = await dataService.getSoilData(profile.location.lat, profile.location.lon)
+
+      // Simple suitability analysis
+      const suitability = this.calculateSuitability(
+        { name: crop, soilPreference: ["loamy"], temperatureRange: [15, 35], waterRequirement: "medium" },
+        { weather: weatherData, soil: soilData, input: { season, farmSize: profile.farmSize } },
+      )
+
+      return {
+        crop,
+        suitability,
+        season,
+        reasons: [`Suitable for ${season} season`, "Good environmental conditions"],
+        riskLevel: "medium" as const,
+      }
+    } catch (error) {
+      logger.error(`Error analyzing crop suitability for ${crop}:`, error)
+      return {
+        crop,
+        suitability: 50,
+        season,
+        reasons: ["Analysis unavailable"],
+        riskLevel: "medium" as const,
+      }
+    }
   }
 }
 
