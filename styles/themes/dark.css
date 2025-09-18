@@ -1,0 +1,35 @@
+/* Dark theme specific styles */
+:root[data-theme="dark"] {
+  --color-background: #020617;
+  --color-foreground: #f8fafc;
+  --color-card: #0f172a;
+  --color-card-foreground: #f8fafc;
+  --color-popover: #0f172a;
+  --color-popover-foreground: #f8fafc;
+  --color-muted: #1e293b;
+  --color-muted-foreground: #94a3b8;
+  --color-border: #334155;
+  --color-input: #334155;
+
+  /* Agricultural dark theme colors */
+  --color-field: #0c1821;
+  --color-crop: #14532d;
+  --color-soil: #451a03;
+  --color-water: #0c4a6e;
+}
+
+/* Dark theme specific components */
+.dark-theme .weather-widget {
+  background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 100%);
+  border: 1px solid #3b82f6;
+}
+
+.dark-theme .crop-card {
+  background: linear-gradient(135deg, #14532d 0%, #166534 100%);
+  border: 1px solid #22c55e;
+}
+
+.dark-theme .soil-card {
+  background: linear-gradient(135deg, #451a03 0%, #92400e 100%);
+  border: 1px solid #f59e0b;
+}
