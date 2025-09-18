@@ -1,26 +1,42 @@
-{
-  "name": "backend",
-  "version": "1.0.0",
-  "main": "dist/app.js",
-  "type": "commonjs",
-  "scripts": {
-    "dev": "tsx src/app.ts",
-    "build": "tsc",
-    "start": "node dist/app.js"
+ {
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "commonjs",
+    "lib": ["ES2022"],
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "removeComments": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "noImplicitThis": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["src/*"],
+      "@/shared/*": ["../shared/*"],
+      "@/types/*": ["../shared/types/*"]
+    },
+    "typeRoots": ["./node_modules/@types", "./src/types"]
   },
-  "dependencies": {
-    "express": "^4.21.2",
-    "dotenv": "^16.6.1",
-    "mongoose": "^8.18.1",
-    "cors": "^2.8.5"
-    // add the rest of your deps here...
-  },
-  "devDependencies": {
-    "typescript": "^5.9.2",
-    "tsx": "^4.20.5",
-    "@types/node": "^20.19.17",
-    "@types/express": "^4.17.23"
-    // add your other dev deps here...
+  "include": ["src/**/*", "../shared/**/*"],
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"],
+  "ts-node": {
+    "esm": true,
+    "experimentalSpecifierResolution": "node"
   }
 }
-
