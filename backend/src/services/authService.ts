@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken"
 import { User } from "../models/User"
-import { logger } from "../utils/logger"
+import logger from "../utils/logger"
 
 export interface AuthTokens {
   accessToken: string
@@ -88,6 +88,35 @@ export class AuthService {
       }
     } catch (error) {
       logger.error("Login error:", error)
+      throw error
+    }
+  }
+
+  async refreshToken(refreshToken: string): Promise<AuthTokens> {
+    try {
+      const decoded = jwt.verify(refreshToken, this.JWT_REFRESH_SECRET) as any
+      if (decoded.type !== "refresh") {
+        throw new Error("Invalid refresh token")
+      }
+
+      const user = await User.findById(decoded.userId)
+      if (!user) {
+        throw new Error("User not found")
+      }
+
+      return this.generateTokens(user._id.toString())
+    } catch (error) {
+      logger.error("Refresh token error:", error)
+      throw new Error("Invalid refresh token")
+    }
+  }
+
+  async logout(userId: string): Promise<void> {
+    try {
+      // In a production app, you might want to blacklist the token
+      logger.info(`User logged out: ${userId}`)
+    } catch (error) {
+      logger.error("Logout error:", error)
       throw error
     }
   }

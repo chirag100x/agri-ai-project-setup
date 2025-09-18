@@ -1,6 +1,6 @@
 import { User } from "../models/User"
 import { Profile } from "../models/Profile"
-import { logger } from "../utils/logger"
+import logger from "../utils/logger"
 
 export interface ProfileUpdateData {
   name?: string
@@ -80,6 +80,23 @@ export class ProfileService {
       return { user, profile }
     } catch (error) {
       logger.error("Update profile error:", error)
+      throw error
+    }
+  }
+
+  async uploadAvatar(userId: string, avatarData: Buffer): Promise<string> {
+    try {
+      // In a real implementation, you would upload to cloud storage
+      // For now, just return a placeholder URL
+      const avatarUrl = `/uploads/avatars/${userId}.jpg`
+
+      // Update user with avatar URL
+      await User.findByIdAndUpdate(userId, { avatar: avatarUrl })
+
+      logger.info(`Avatar uploaded for user: ${userId}`)
+      return avatarUrl
+    } catch (error) {
+      logger.error("Upload avatar error:", error)
       throw error
     }
   }
