@@ -1,7 +1,7 @@
 import OpenAI from "openai"
 import { Message } from "../models/Message"
 import { translateService } from "./translateService"
-import { logger } from "../utils/logger"
+import logger from "../utils/logger"
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,

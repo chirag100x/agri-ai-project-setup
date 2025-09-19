@@ -1,6 +1,6 @@
 import OpenAI from "openai"
 import { translateService } from "./translateService"
-import { logger } from "../utils/logger"
+import logger from "../utils/logger"
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -9,11 +9,16 @@ const openai = new OpenAI({
 class VoiceService {
   async speechToText(audioBuffer: Buffer, language = "en"): Promise<string> {
     try {
-      const response = await openai.audio.transcriptions.create({
+      const transcriptionParams: any = {
         file: new File([audioBuffer], "audio.wav", { type: "audio/wav" }),
         model: "whisper-1",
-        language: language === "en" ? undefined : language,
-      })
+      }
+
+      if (language !== "en") {
+        transcriptionParams.language = language
+      }
+
+      const response = await openai.audio.transcriptions.create(transcriptionParams)
 
       return response.text
     } catch (error) {

@@ -1,6 +1,6 @@
 import axios from "axios"
 import { cache } from "../utils/cache"
-import { logger } from "../utils/logger"
+import logger from "../utils/logger"
 
 interface TranslationResponse {
   translatedText: string
@@ -33,7 +33,8 @@ class TranslateService {
     const cached = await cache.get(cacheKey)
 
     if (cached) {
-      return cached.translatedText
+      const cachedResult = JSON.parse(cached)
+      return cachedResult.translatedText
     }
 
     try {
@@ -57,7 +58,7 @@ class TranslateService {
         confidence: 0.95,
       }
 
-      await cache.set(cacheKey, result, 86400) // Cache for 24 hours
+      await cache.set(cacheKey, JSON.stringify(result), 86400) // Cache for 24 hours
       return translatedText
     } catch (error) {
       logger.error("Error translating text:", error)

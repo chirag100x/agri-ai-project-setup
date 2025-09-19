@@ -4,7 +4,6 @@ import helmet from "helmet"
 import morgan from "morgan"
 import compression from "compression"
 import rateLimit from "express-rate-limit"
-import { config } from "dotenv"
 
 // Import routes
 import authRoutes from "./routes/authRoutes"
@@ -15,10 +14,7 @@ import profileRoutes from "./routes/profileRoutes"
 // Import middleware
 import { errorHandler } from "./middleware/errorHandler"
 import { authMiddleware } from "./middleware/authMiddleware"
-import { logger } from "./utils/logger"
-
-// Load environment variables
-config()
+import logger from "./utils/logger"
 
 const app = express()
 
