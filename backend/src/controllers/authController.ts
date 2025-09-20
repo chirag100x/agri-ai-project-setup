@@ -2,7 +2,8 @@ import type { Request, Response, NextFunction } from "express"
 import { authService } from "../services/authService"
 import { validationResult } from "express-validator"
 
-export const register = async (req: Request, res: Response, next: NextFunction) => {
+// Signup (register user)
+export const signup = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
@@ -29,6 +30,7 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
   }
 }
 
+// Login
 export const login = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const errors = validationResult(req)
@@ -37,7 +39,6 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
     }
 
     const { email, password } = req.body
-
     const result = await authService.login(email, password)
 
     res.json({
@@ -49,21 +50,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
   }
 }
 
-export const refreshToken = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const { refreshToken } = req.body
-
-    const result = await authService.refreshToken(refreshToken)
-
-    res.json({
-      success: true,
-      data: result,
-    })
-  } catch (error) {
-    next(error)
-  }
-}
-
+// Logout
 export const logout = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { refreshToken } = req.body
@@ -77,3 +64,4 @@ export const logout = async (req: Request, res: Response, next: NextFunction) =>
     next(error)
   }
 }
+
