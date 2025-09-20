@@ -1,11 +1,18 @@
 import { Router } from "express"
 import { body } from "express-validator"
-import { AuthController } from "../controllers/AuthController"
+import {
+  signup,
+  login,
+  logout,
+  resetPassword,
+  changePassword,
+  getCurrentUser,
+  updateProfile,
+} from "../controllers/authController"
 import { validationMiddleware } from "../middleware/validationMiddleware"
 import { authMiddleware } from "../middleware/authMiddleware"
 
 const router = Router()
-const authController = new AuthController()
 
 // Validation schemas
 const loginValidation = [
@@ -37,23 +44,17 @@ const changePasswordValidation = [
 ]
 
 // Routes
-router.post("/login", loginValidation, validationMiddleware, authController.login)
+router.post("/login", loginValidation, validationMiddleware, login)
 
-router.post("/signup", signupValidation, validationMiddleware, authController.signup)
+router.post("/signup", signupValidation, validationMiddleware, signup)
 
-router.post("/logout", authController.logout)
+router.post("/logout", logout)
 
-router.post("/reset-password", resetPasswordValidation, validationMiddleware, authController.resetPassword)
+router.post("/reset-password", resetPasswordValidation, validationMiddleware, resetPassword)
 
-router.post(
-  "/change-password",
-  authMiddleware,
-  changePasswordValidation,
-  validationMiddleware,
-  authController.changePassword,
-)
+router.post("/change-password", authMiddleware, changePasswordValidation, validationMiddleware, changePassword)
 
-router.get("/me", authMiddleware, authController.getCurrentUser)
+router.get("/me", authMiddleware, getCurrentUser)
 
 router.patch(
   "/profile",
@@ -74,7 +75,8 @@ router.patch(
       .withMessage("Primary crop must be less than 50 characters"),
   ],
   validationMiddleware,
-  authController.updateProfile,
+  updateProfile,
 )
 
 export default router
+
